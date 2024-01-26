@@ -19,7 +19,7 @@ custom_settings = {
     "PRINT_ALIGNMENT_ARRAY": True       # Print the alignment array.
 }
 
-# ANSI Colors
+# ANSI Colors: For better distinguishablility in console.
 color = {
     "green": "\033[32m",
     "yellow": "\033[33m",
@@ -448,8 +448,8 @@ def word_edit_distance(x, y):
 
 def track_ptr_table(ptr_table):
     """
-    This function back-tracks an operation table and retrieves a reversed array of
-    the sequence of operations.
+    This function back-tracks an operation table and retrieves
+    a reversed array of the sequence of operations.
     :param ptr_table: Pointer table to be tracked.
     :return: An array of reversed operation sequence (in operation code).
     """
@@ -492,9 +492,9 @@ def preorder_traverse(root, result = None):
     This function reads a root node of a single-sided tree, and pre-order
     traverse the tree, which may contain hyphens, indicating there is an insertion
     or deletion. The traversal embraces the hyphen into the sequence, restoring
-    the aligned array.
+    the reversed aligned array.
     :param root: Root node of a word letter array, most likely defined specially as "#".
-    :param result: Intermediate array for recursion, shouldn't be inputted externally.
+    :param result: Intermediate array for recursion, which shouldn't be inputted externally.
     :return: Reversed aligned array, e.g.['Y','P','P','-','A',''H].
     """
     if result is None:

@@ -619,6 +619,11 @@ def main():
 
 def custom_test():
 
+    custom_test_settings = {
+        "TEST_WORD": False,
+        "TEST_SENTENCE": True,
+    }
+
     test_subjects_word=[
         #("EXECUTION", "INTENTION"),     # Course example
         #("AGGCTATCAC","TAGCTGTCAC"),    # Alternative ins and del
@@ -635,19 +640,37 @@ def custom_test():
             "I love natural language processing.",
             "I really like natural language processing course."
          ),
+        (
+            "I love you.",
+            "I love you."
+        ),
+        (
+            "I like the cake.",
+            "The cake is a lie."
+        ),
+        (
+            "I am a fool.",
+            "I am the fool."
+        ),
+        (
+            "I am a fool",
+            "Am I the fool?"
+        )
     ]
 
-    for index, test_subject in enumerate(test_subjects_word):
-        print(color['green'] + "\nTest " + str(index+1) + ": " + color['default'], end = " ")
-        print(test_subject[0] + " & " + test_subject[1])
-        [min_edit_dist, alignment] = word_edit_distance(test_subject[0],test_subject[1])
-        print(color['yellow'] + "Minimal Edit Distance: " + color['default'] + str(min_edit_dist))
+    if custom_test_settings["TEST_WORD"]:
+        for index, test_subject in enumerate(test_subjects_word):
+            print(color['green'] + "\nTest " + str(index+1) + ": " + color['default'], end = " ")
+            print(test_subject[0] + " & " + test_subject[1])
+            [min_edit_dist, alignment] = word_edit_distance(test_subject[0],test_subject[1])
+            print(color['yellow'] + "Minimal Edit Distance: " + color['default'] + str(min_edit_dist))
 
-    for index, test_subject in enumerate(test_subjects_sentence):
-        print(color['green'] + "\nTest " + str(index+1) + ": " + color['default'], end = " ")
-        print(test_subject[0] + " & " + test_subject[1])
-        [min_edit_dist, alignment] = sentence_edit_distance(test_subject[0],test_subject[1])
-        print(color['yellow'] + "Minimal Edit Distance: " + color['default'] + str(min_edit_dist))
+    if custom_test_settings['TEST_SENTENCE']:
+        for index, test_subject in enumerate(test_subjects_sentence):
+            print(color['green'] + "\nTest " + str(index+1) + ": " + color['default'], end = " ")
+            print(test_subject[0] + " & " + test_subject[1])
+            [min_edit_dist, alignment] = sentence_edit_distance(test_subject[0],test_subject[1])
+            print(color['yellow'] + "Minimal Edit Distance: " + color['default'] + str(min_edit_dist))
 
 if __name__ == '__main__':
     import os

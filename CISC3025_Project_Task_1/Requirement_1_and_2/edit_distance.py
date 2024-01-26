@@ -115,6 +115,16 @@ class Table:
             return code
         return self.alt_arr[code]
 
+    def __get_input_type(self):
+        """
+        Get the type of the input.
+        :return: Data type of the input.
+        """
+        if self.word_strings is None:
+            return None
+        sample = self.word_strings[0]
+        return type(sample)
+
     def write(self, x, y, val):
         """
         Write a value into the table.
@@ -144,7 +154,7 @@ class Table:
     def levenstein_init(self,is_val):
         """
         Initialize the table using the init rules of Levenstein distance.
-        :param is_val: Value table or pointer table.
+        :param is_val: True for value table or False for pointer table.
         """
         if is_val:
             # Initialize first row of value table.
@@ -168,6 +178,10 @@ class Table:
         """
         Print the table. Runs in O(n*m) time.
         """
+        """ Guardian method, only support print table for char."""
+        if not self.__get_input_type() == str:
+
+            return
 
         ''' Ensure tidiness of table.'''
         # Initialize each column's max width.
@@ -506,37 +520,10 @@ def sentence_edit_distance(x, y):
                     ['Today','-','a','good','day']
                 ].
     """
-    """ Step 1. Create a table with starting blanks using x and y."""
-    # First get the length of two strings, and convert to table size.
-    # Extra length is required to fill a blank symbol (#).
-    table_len_x = len(x) + 1
-    table_len_y = len(y) + 1
+    [x,y] = [sentence_preprocess(x),sentence_preprocess(y)]
+    edit_distance,alignment = word_edit_distance(x,y)
 
-    # Initialize Value Table
-    # An empty table of size (len_x + 1) * (len_y + 1) that is filled with 0.
-    val_table = Table(
-        table_len_x,
-        table_len_y,
-        default_val=0,  # Fill 0 into the table.
-        title="Value Table",
-    )
-
-    # Initialize Pointer Table.
-    # An empty table of size (len_x + 1) * (len_y + 1) that is filled with "0", meaning not known.
-    ptr_table = Table(
-        table_len_x,
-        table_len_y,
-        default_val=-1,  # Fill "Unknown" into table.
-        title="Operation Table",
-        alt_arr=edit
-    )
-
-    """ Step 2. Initialize the table using the init rules of Levenstein distance. """
-
-    val_table.levenstein_init(is_val=True)
-    ptr_table.levenstein_init(is_val=False)
-
-    #return edit_distance,alignment
+    return edit_distance,alignment
 
 def sentence_preprocess(sentence):
     """
@@ -630,7 +617,7 @@ def main():
 def custom_test():
 
     test_subjects_word=[
-        ("EXECUTION", "INTENTION"),     # Course example
+        #("EXECUTION", "INTENTION"),     # Course example
         #("AGGCTATCAC","TAGCTGTCAC"),    # Alternative ins and del
         #("HAPPY","HAPPY"),              # Exact same
         #("EXTENSION", "INTENTION"),     # Different but no ins or del
@@ -640,13 +627,24 @@ def custom_test():
         #("","")                         # Empty string
     ]
 
+    test_subjects_sentence = [
+        (
+            "I love natural language processing.",
+            "I really like natural language processing course."
+         ),
+    ]
+
     for index, test_subject in enumerate(test_subjects_word):
         print(color['green'] + "\nTest " + str(index+1) + ": " + color['default'], end = " ")
         print(test_subject[0] + " & " + test_subject[1])
         [min_edit_dist, alignment] = word_edit_distance(test_subject[0],test_subject[1])
         print(color['yellow'] + "Minimal Edit Distance: " + color['default'] + str(min_edit_dist))
 
-
+    for index, test_subject in enumerate(test_subjects_sentence):
+        print(color['green'] + "\nTest " + str(index+1) + ": " + color['default'], end = " ")
+        print(test_subject[0] + " & " + test_subject[1])
+        [min_edit_dist, alignment] = sentence_edit_distance(test_subject[0],test_subject[1])
+        print(color['yellow'] + "Minimal Edit Distance: " + color['default'] + str(min_edit_dist))
 
 if __name__ == '__main__':
     import os

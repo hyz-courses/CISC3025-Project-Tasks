@@ -520,7 +520,10 @@ def sentence_edit_distance(x, y):
                     ['Today','-','a','good','day']
                 ].
     """
+    """ Step 1. Pre-process sentences into token arrays."""
     [x,y] = [sentence_preprocess(x),sentence_preprocess(y)]
+
+    """ Step 2. Apply this array to match."""
     edit_distance,alignment = word_edit_distance(x,y)
 
     return edit_distance,alignment

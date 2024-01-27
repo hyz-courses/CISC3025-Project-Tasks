@@ -151,7 +151,7 @@ class Table:
             for y in range(y_1,y_2 + 1):
                 self.write(x,y,val)
 
-    def levenstein_init(self,is_val):
+    def levenshtein_init(self, is_val):
         """
         Initialize the table using the init rules of Levenstein distance.
         :param is_val: True for value table or False for pointer table.
@@ -249,7 +249,7 @@ class Node:
         """
         return self.left
 
-    def get_right(self):
+    def get_mid(self):
         """
         Retrieve the right child node.
         :return: Right child node.
@@ -275,7 +275,7 @@ class Node:
         self.left = Node(val)
 
 
-    def set_right(self, val):
+    def set_mid(self, val):
         """
         Set the value of right child node. Value must be string.
         :param val: Intended value to be set.
@@ -330,8 +330,8 @@ def word_edit_distance(x, y):
 
     """ Step 2. Initialize the table using the init rules of Levenstein distance. """
 
-    val_table.levenstein_init(is_val=True)
-    ptr_table.levenstein_init(is_val=False)
+    val_table.levenshtein_init(is_val=True)
+    ptr_table.levenshtein_init(is_val=False)
 
     """ Step 3. Gradually fill in the table using the rules of Levenstein distance. """
     for j in range(1, table_len_y):
@@ -383,12 +383,12 @@ def word_edit_distance(x, y):
     [x_last_node, y_last_node] = [x_init_node, y_init_node] # Initialize two lag pointers.
 
     for ch in rev_x_arr:        # Form the tree of x.
-        x_last_node.set_right(ch)
-        x_last_node = x_last_node.get_right()
+        x_last_node.set_mid(ch)
+        x_last_node = x_last_node.get_mid()
 
     for ch in rev_y_arr:        # Form the tree of y.
-        y_last_node.set_right(ch)
-        y_last_node = y_last_node.get_right()
+        y_last_node.set_mid(ch)
+        y_last_node = y_last_node.get_mid()
 
     ''' 4-2. Track the operation path from the operation table.'''
     # 4-2.1. Track the path from the table (in reversed order).
@@ -402,6 +402,8 @@ def word_edit_distance(x, y):
     4-3. Traverse the tree, add hyphen mark to the other side 
     of the tree when required (ins, del).
     '''
+    #TODO: There may be some problem with this. 应该用三叉树
+
     # 4-3.1. Initialize array pointer and track pointer.
     track_ptr = 0
     x_node_ptr = x_init_node
@@ -420,8 +422,8 @@ def word_edit_distance(x, y):
             x_node_ptr.set_left("-")
 
         # Proceed
-        x_node_ptr = x_node_ptr.get_right()
-        y_node_ptr = y_node_ptr.get_right()
+        x_node_ptr = x_node_ptr.get_mid()
+        y_node_ptr = y_node_ptr.get_mid()
 
         track_ptr += 1
 
@@ -620,12 +622,12 @@ def main():
 def custom_test():
 
     custom_test_settings = {
-        "TEST_WORD": False,
-        "TEST_SENTENCE": True,
+        "TEST_WORD": True,
+        "TEST_SENTENCE": False,
     }
 
     test_subjects_word=[
-        #("EXECUTION", "INTENTION"),     # Course example
+        ("EXECUTION", "INTENTION"),     # Course example
         #("AGGCTATCAC","TAGCTGTCAC"),    # Alternative ins and del
         #("HAPPY","HAPPY"),              # Exact same
         #("EXTENSION", "INTENTION"),     # Different but no ins or del
@@ -633,6 +635,7 @@ def custom_test():
         #("A","B"),                      # Single letter
         #("","A"),                       # Empty string & single letter
         #("","")                         # Empty string
+        ("AGGCTATCACCTGACCTCCAGGCCGATGCCC","TAGCTATCACGACCGCGGTCGATTTGCCCGAC")
     ]
 
     test_subjects_sentence = [

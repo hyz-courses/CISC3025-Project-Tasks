@@ -15,7 +15,7 @@ import re
 custom_settings = {
     "TEST_MODE": True,                  # Run custom_test() func instead of main()
     "PRINT_TABLE": True,                # Print value & operation table.
-    "PRINT_TRACK": False,                # Print the backtracked operation array.
+    "PRINT_TRACK": True,                # Print the backtracked operation array.
     "PRINT_ALIGNMENT_ARRAY": True       # Print the alignment array.
 }
 
@@ -224,15 +224,16 @@ class Node:
     A single-sided tree is required to simplify the alignment process.
     This class represents a node of a tree.
     """
-    def __init__(self, val, left = None, right = None):
+    def __init__(self, val, left = None, mid = None, right = None):
         """
         Constructor.
         :param val: Character value of this node.
         :param left:    Left child.
-        :param right:   Right child.
+        :param mid:   Right child.
         """
         self.val = val
         self.left = left
+        self.mid = mid
         self.right = right
 
     def get_val(self):
@@ -250,6 +251,13 @@ class Node:
         return self.left
 
     def get_mid(self):
+        """
+        Retrieve the right child node.
+        :return: Right child node.
+        """
+        return self.mid
+
+    def get_right(self):
         """
         Retrieve the right child node.
         :return: Right child node.
@@ -276,6 +284,15 @@ class Node:
 
 
     def set_mid(self, val):
+        """
+        Set the value of right child node. Value must be string.
+        :param val: Intended value to be set.
+        """
+        if type(val) != str:
+            raise Exception("Child of a node must be a node.")
+        self.mid = Node(val)
+
+    def set_right(self, val):
         """
         Set the value of right child node. Value must be string.
         :param val: Intended value to be set.
@@ -373,26 +390,24 @@ def word_edit_distance(x, y):
     x_arr = [ch for ch in x]
     y_arr = [ch for ch in y]
 
-    # 4-1.2. Reverse the word array for better processing.
-    [rev_x_arr, rev_y_arr] = [x_arr[::-1], y_arr[::-1]]
-
     # 4-1.3. Insert array element into a single-sided tree.
     x_init_node = Node("#")
     y_init_node = Node("#")
 
-    [x_last_node, y_last_node] = [x_init_node, y_init_node] # Initialize two lag pointers.
+    [x_init_ptr, y_init_ptr] = [x_init_node, y_init_node] # Initialize two lag pointers.
 
-    for ch in rev_x_arr:        # Form the tree of x.
-        x_last_node.set_mid(ch)
-        x_last_node = x_last_node.get_mid()
+    for ch in x_arr:        # Form the tree of x.
+        x_init_ptr.set_mid(ch)
+        x_init_ptr = x_init_ptr.get_mid()
 
-    for ch in rev_y_arr:        # Form the tree of y.
-        y_last_node.set_mid(ch)
-        y_last_node = y_last_node.get_mid()
+    for ch in y_arr:        # Form the tree of y.
+        y_init_ptr.set_mid(ch)
+        y_init_ptr = y_init_ptr.get_mid()
 
     ''' 4-2. Track the operation path from the operation table.'''
     # 4-2.1. Track the path from the table (in reversed order).
     op_track = track_ptr_table(ptr_table)
+    op_track = op_track[::-1]       # Reverse the operation track
 
     if custom_settings['PRINT_TRACK']:
         print(color['yellow'] + "Operation Track:" + color['default'])
@@ -406,8 +421,8 @@ def word_edit_distance(x, y):
 
     # 4-3.1. Initialize array pointer and track pointer.
     track_ptr = 0
-    x_node_ptr = x_init_node
-    y_node_ptr = y_init_node
+    x_node_ptr = x_init_node  # First letter of x array
+    y_node_ptr = y_init_node  # First letter of y array
 
     # 4-3.2. Traversing the tree, adding hyphens.
     while x_node_ptr is not None and y_node_ptr is not None:
@@ -416,28 +431,29 @@ def word_edit_distance(x, y):
             # Insertion.
             # Operand string (x): Insert a "-" before cur letter.
             y_node_ptr.set_left("-")
+            x_node_ptr = x_node_ptr.get_mid()
         elif op_track[track_ptr] == edit_code['del']:
             # Deletion.
             # Template string (y): Insert a "-" after current letter.
             x_node_ptr.set_left("-")
-
-        # Proceed
-        x_node_ptr = x_node_ptr.get_mid()
-        y_node_ptr = y_node_ptr.get_mid()
+            y_node_ptr = y_node_ptr.get_mid()
+        elif op_track[track_ptr] == edit_code['sub'] or op_track[track_ptr] == edit_code['mch']:
+            # Proceed
+            x_node_ptr = x_node_ptr.get_mid()
+            y_node_ptr = y_node_ptr.get_mid()
 
         track_ptr += 1
 
     # 4-3.3. Pre-order the tree again to retrieve the processed array.
-    rev_x_arr = preorder_traverse(x_init_node)
-    rev_y_arr = preorder_traverse(y_init_node)
+    x_arr = traverse(x_init_node)
+    y_arr = traverse(y_init_node)
 
     ''' 4.4. Post Processing to Restore array.'''
     # 4.4.1. Remove the blank buffer.
-    rev_x_arr.remove("#")
-    rev_y_arr.remove("#")
+    x_arr.remove("#")
+    y_arr.remove("#")
 
     # 4.4.2. Reverse the array again to get the alignment.
-    [x_arr, y_arr] = [rev_x_arr[::-1], rev_y_arr[::-1]]
     alignment = [x_arr,y_arr]
 
     # If required, print the alignment array.
@@ -489,7 +505,7 @@ def track_ptr_table(ptr_table):
 
     return op_track
 
-def preorder_traverse(root, result = None):
+def traverse(root, result = None):
     """
     This function reads a root node of a single-sided tree, and pre-order
     traverse the tree, which may contain hyphens, indicating there is an insertion
@@ -502,13 +518,18 @@ def preorder_traverse(root, result = None):
     if result is None:
         result = []
     if root is not None:
+        # Left node
+        traverse(root.get_left(),result)
         # Visit root
         result.append(root.val)
-        # Left node
-        preorder_traverse(root.left, result)
         # Right node
-        preorder_traverse(root.right, result)
+        traverse(root.get_right(), result)
+        # Next node
+        traverse(root.get_mid(), result)
     return result
+
+def generate_alignment(x_arr, y_arr, op_track):
+    pass
 
 def sentence_edit_distance(x, y):
     """
@@ -627,7 +648,8 @@ def custom_test():
     }
 
     test_subjects_word=[
-        ("EXECUTION", "INTENTION"),     # Course example
+        #("EXECUTION", "INTENTION"),     # Course example
+        ("ALIGN","ALIGNMENT"),
         #("AGGCTATCAC","TAGCTGTCAC"),    # Alternative ins and del
         #("HAPPY","HAPPY"),              # Exact same
         #("EXTENSION", "INTENTION"),     # Different but no ins or del
@@ -635,7 +657,7 @@ def custom_test():
         #("A","B"),                      # Single letter
         #("","A"),                       # Empty string & single letter
         #("","")                         # Empty string
-        ("AGGCTATCACCTGACCTCCAGGCCGATGCCC","TAGCTATCACGACCGCGGTCGATTTGCCCGAC")
+        #("AGGCTATCACCTGACCTCCAGGCCGATGCCC","TAGCTATCACGACCGCGGTCGATTTGCCCGAC")
     ]
 
     test_subjects_sentence = [

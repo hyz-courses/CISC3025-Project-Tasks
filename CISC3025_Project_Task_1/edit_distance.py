@@ -12,11 +12,12 @@ import argparse
 import re
 
 # Settings for visualizing & testing algorithms.
+# Please set all values to false before running.
 custom_settings = {
-    "TEST_MODE": True,                  # Run custom_test() func instead of main()
-    "PRINT_TABLE": True,                # Print value & operation table.
-    "PRINT_TRACK": True,                # Print the backtracked operation array.
-    "PRINT_ALIGNMENT_ARRAY": True       # Print the alignment array.
+    "TEST_MODE": False,                  # Run custom_test() func instead of main()
+    "PRINT_TABLE": False,                # Print value & operation table.
+    "PRINT_TRACK": False,                # Print the backtracked operation array.
+    "PRINT_ALIGNMENT_ARRAY": False       # Print the alignment array.
 }
 
 # ANSI Colors: For better distinguishablility in console.

@@ -13,7 +13,7 @@ import re
 
 # Settings for visualizing & testing algorithms.
 custom_settings = {
-    "TEST_MODE": True,                  # Run custom_test() func instead of main()
+    "TEST_MODE": False,                  # Run custom_test() func instead of main()
     "PRINT_TABLE": False,                # Print value & operation table.
     "PRINT_TRACK": False,                # Print the backtracked operation array.
     "PRINT_ALIGNMENT_ARRAY": False       # Print the alignment array.
@@ -426,8 +426,6 @@ def word_edit_distance(x, y):
     4-3. Traverse the tree, add hyphen mark to the other side 
     of the tree when required (ins, del).
     '''
-    #TODO: There may be some problem with this. 应该用三叉树????
-
     # 4-3.1. Initialize array pointer and track pointer.
     track_ptr = 0
     x_node_ptr = x_init_node  # First letter of x array
@@ -578,7 +576,8 @@ def sentence_edit_distance(x, y):
                 ].
     """
     """ Step 1. Pre-process sentences into token arrays."""
-    [x,y] = [sentence_preprocess(x),sentence_preprocess(y)]
+    # This is omitted. It is done outside the function.
+    #[x_arr,y_arr] = [sentence_preprocess(x),sentence_preprocess(y)]
 
     """ Step 2. Apply this array to match."""
     edit_distance,alignment = word_edit_distance(x,y)
@@ -635,12 +634,11 @@ def output_alignment(alignment):
     return
 
 def batch_word(input_file, output_file=None):
-    #implement the function to finish the requirement 3
-    #TODO:
-    #   read the samples from the input file (i.e. word_corpus.txt), notice that the number of the hypothesis is maybe diverse
-    #   use the function word_edit_distance to calculate the edit distance between the reference hand each hypothesis
-    #   output the result in the file 'word_edit_distance.txt' with the required format
-
+    """
+    Read an input file with H/R started lines and outputs the processed min edit distance.
+    :param input_file: File path of input file.
+    :param output_file: File path of output file.
+    """
    # Open files, store lines into array.
     with open(input_file, "r") as file:
         data = file.readlines()
@@ -677,20 +675,68 @@ def batch_word(input_file, output_file=None):
         output = output + item
     print(output)
 
+    # Write output to external file.
     if output_file is not None:
         with open(output_file,"w") as o_file:
             o_file.write(output)
 
-def batch_sentence(inputfile,outputfile):
-    #implement the function to finish the requirement 4
-    #TODO:
-    #   read the samples from the input file (i.e. sentence_corpus.txt)
-    #   use the function sentence_edit_distance to calculate the edit distance between the reference hand each hypothesis
-    #   output the result in the file 'sentence_edit_distance.txt' with the required format
+def batch_sentence(input_file,output_file=None):
+    """
+    Read an input file with H/R started lines and outputs the processed min edit distance.
+    :param input_file: File path of input file.
+    :param output_file: File path of output file.
+    """
+    with open(input_file, "r") as file:
+        data = file.readlines()
+
+    # Define a rule to split the line into code and sentences.
+    rule= r'(?<=[H|R])'
+    re.compile(rule)
+
+    # Start to process.
+    cur_anchor = ""         # Code-R words
+    code_and_sentences = []     # Stored instances of code, words and edit dist.
+    for token in data:
+        code_and_sentence = re.split(rule,token)
+        # Remove empty members.
+        code_and_sentence = [ch for ch in code_and_sentence if ch != ""]
+        if code_and_sentence[0] == "R":
+            # Meeting an R, change the anchor sentenc to this.
+            code_and_sentence.append("")
+            cur_anchor = code_and_sentence[1]
+            code_and_sentences.append(code_and_sentence)
+        elif code_and_sentence[0] == "H":
+            # Meeting an H, compare this with anchor sentence.
+            [edit_distance, _] = sentence_edit_distance(cur_anchor, code_and_sentence[1])
+            # Store edit distance at last slot.
+            code_and_sentence.append(str(edit_distance))
+            code_and_sentences.append(code_and_sentence)
+        else:
+            # Shouldn't meet something other than R or H.
+            raise Exception("Invalid header code!")
+
+    # Initialize output
+    output = ""
+    for code_and_sentence in code_and_sentences:
+        sentence_content = code_and_sentence[1]
+        sentence_content.replace("\n"," ")
+        item = code_and_sentence[0] + " " + sentence_content + " " + code_and_sentence[2] + " \n"
+        output = output + item
+
+    # Write output to external file.
+    if output_file is not None:
+        with open(output_file,"w") as o_file:
+            o_file.write(output)
+
+    print(output)
+
     return
 
+
 def main():
-    ''' Main Function '''
+    """
+    Main Function.
+    """
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-w', '--word',type=str,nargs=2,help='word comparson')
@@ -717,13 +763,14 @@ def custom_test():
 
     custom_test_settings = {
         "TEST_WORD": False,
-        "TEST_SENTENCE": False,
-        "TEST_WORD_CORPUS":True,
+        "TEST_SENTENCE": True,
+        "TEST_WORD_CORPUS":False,
+        "TEST_SENTENCE_CORPUS":True,
     }
 
     test_subjects_word=[
         #("EXECUTION", "INTENTION"),     # Course example
-        #("ALIGN","ALIGNMENT"),
+        #("ALIGN","ALIGNMENT"),          # Wierd, seems to match further letters.
         #("LAND","LANDLORDS"),
         #("LAND","LANDLORNS"),
         #("F","FLOW"),
@@ -759,6 +806,10 @@ def custom_test():
         (
             "I am a fool",
             "Am I the fool?"
+        ),
+        (
+            "AAAAAA AAAA AA A",
+            "SFS FFF AA f"
         )
     ]
 
@@ -773,11 +824,13 @@ def custom_test():
         for index, test_subject in enumerate(test_subjects_sentence):
             print(color['green'] + "\nTest " + str(index+1) + ": " + color['default'], end = " ")
             print(test_subject[0] + " & " + test_subject[1])
-            [min_edit_dist, alignment] = sentence_edit_distance(test_subject[0],test_subject[1])
+            [min_edit_dist, alignment] = sentence_edit_distance(test_subjects_sentence[0],test_subjects_sentence[1])
             print(color['yellow'] + "Minimal Edit Distance: " + color['default'] + str(min_edit_dist))
 
     if custom_test_settings['TEST_WORD_CORPUS']:
         batch_word("InputFiles/word_corpus.txt", "OutputFiles/word_edit_distance.txt")
+    if custom_test_settings['TEST_SENTENCE_CORPUS']:
+        batch_sentence("InputFiles/sentence_corpus.txt","OutputFiles/sentence_edit_distance.txt")
 
 if __name__ == '__main__':
     import os

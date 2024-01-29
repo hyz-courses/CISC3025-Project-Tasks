@@ -13,10 +13,10 @@ import re
 
 # Settings for visualizing & testing algorithms.
 custom_settings = {
-    "TEST_MODE": False,                  # Run custom_test() func instead of main()
-    "PRINT_TABLE": False,                # Print value & operation table.
-    "PRINT_TRACK": False,                # Print the backtracked operation array.
-    "PRINT_ALIGNMENT_ARRAY": False       # Print the alignment array.
+    "TEST_MODE": True,                  # Run custom_test() func instead of main()
+    "PRINT_TABLE": True,                # Print value & operation table.
+    "PRINT_TRACK": True,                # Print the backtracked operation array.
+    "PRINT_ALIGNMENT_ARRAY": True       # Print the alignment array.
 }
 
 # ANSI Colors: For better distinguishablility in console.
@@ -714,6 +714,7 @@ def batch_sentence(input_file,output_file=None):
         else:
             # Shouldn't meet something other than R or H.
             raise Exception("Invalid header code!")
+        print(code_and_sentence)
 
     # Initialize output
     output = ""
@@ -762,15 +763,15 @@ def main():
 def custom_test():
 
     custom_test_settings = {
-        "TEST_WORD": False,
-        "TEST_SENTENCE": True,
+        "TEST_WORD": True,
+        "TEST_SENTENCE": False,
         "TEST_WORD_CORPUS":False,
-        "TEST_SENTENCE_CORPUS":True,
+        "TEST_SENTENCE_CORPUS":False,
     }
 
     test_subjects_word=[
         #("EXECUTION", "INTENTION"),     # Course example
-        #("ALIGN","ALIGNMENT"),          # Wierd, seems to match further letters.
+        ("ALIGN","ALIGNMENT"),          # Wierd, seems to match further letters.
         #("LAND","LANDLORDS"),
         #("LAND","LANDLORNS"),
         #("F","FLOW"),
@@ -828,9 +829,9 @@ def custom_test():
             print(color['yellow'] + "Minimal Edit Distance: " + color['default'] + str(min_edit_dist))
 
     if custom_test_settings['TEST_WORD_CORPUS']:
-        batch_word("InputFiles/word_corpus.txt", "OutputFiles/word_edit_distance.txt")
+        batch_word("./InputFiles/word_corpus.txt", "./OutputFiles/word_edit_distance.txt")
     if custom_test_settings['TEST_SENTENCE_CORPUS']:
-        batch_sentence("InputFiles/sentence_corpus.txt","OutputFiles/sentence_edit_distance.txt")
+        batch_sentence("./InputFiles/sentence_corpus.txt","./OutputFiles/sentence_edit_distance.txt")
 
 if __name__ == '__main__':
     import os

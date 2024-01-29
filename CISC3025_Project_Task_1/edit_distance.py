@@ -14,9 +14,9 @@ import re
 # Settings for visualizing & testing algorithms.
 custom_settings = {
     "TEST_MODE": True,                  # Run custom_test() func instead of main()
-    "PRINT_TABLE": True,                # Print value & operation table.
-    "PRINT_TRACK": True,                # Print the backtracked operation array.
-    "PRINT_ALIGNMENT_ARRAY": True       # Print the alignment array.
+    "PRINT_TABLE": False,                # Print value & operation table.
+    "PRINT_TRACK": False,                # Print the backtracked operation array.
+    "PRINT_ALIGNMENT_ARRAY": False       # Print the alignment array.
 }
 
 # ANSI Colors: For better distinguishablility in console.
@@ -640,11 +640,46 @@ def batch_word(input_file, output_file=None):
     #   read the samples from the input file (i.e. word_corpus.txt), notice that the number of the hypothesis is maybe diverse
     #   use the function word_edit_distance to calculate the edit distance between the reference hand each hypothesis
     #   output the result in the file 'word_edit_distance.txt' with the required format
-    with open(input_file, "r") as f:
-        data = f.readlines()
-        print(data)
 
-    return
+   # Open files, store lines into array.
+    with open(input_file, "r") as file:
+        data = file.readlines()
+
+    # Define a rule to split the line into code and words.
+    rule= r'[\s]+'
+    re.compile(rule)
+
+    # Start to process.
+    cur_anchor = ""         # Code-R words
+    code_and_words = []     # Stored instances of code, words and edit dist.
+    for token in data:
+        code_and_word = re.split(rule,token)
+        # I used to remove the empty member, but it seems unnecessary.
+        # code_and_word = [ch for ch in code_and_word if ch != ""]
+        if code_and_word[0]=="R":
+            # Meeting an R, change the anchor word to this.
+            cur_anchor = code_and_word[1]
+            code_and_words.append(code_and_word)
+        elif code_and_word[0]=="H":
+            # Meeting an H, compare this with anchor word.
+            [edit_distance,_] = word_edit_distance(cur_anchor,code_and_word[1])
+            # Store edit distance at last slot.
+            code_and_word[2] = str(edit_distance)
+            code_and_words.append(code_and_word)
+        else:
+            # Shouldn't meet something other than R or H.
+            raise Exception("Invalid header code!")
+
+    # Initialize output
+    output = ""
+    for code_and_word in code_and_words:
+        item = code_and_word[0] + " " + code_and_word[1] + " " + code_and_word[2] + "\n"
+        output = output + item
+    print(output)
+
+    if output_file is not None:
+        with open(output_file,"w") as o_file:
+            o_file.write(output)
 
 def batch_sentence(inputfile,outputfile):
     #implement the function to finish the requirement 4
@@ -681,14 +716,14 @@ def main():
 def custom_test():
 
     custom_test_settings = {
-        "TEST_WORD": True,
+        "TEST_WORD": False,
         "TEST_SENTENCE": False,
-        "TEST_WORD_CORPUS":False,
+        "TEST_WORD_CORPUS":True,
     }
 
     test_subjects_word=[
         #("EXECUTION", "INTENTION"),     # Course example
-        ("ALIGN","ALIGNMENT"),
+        #("ALIGN","ALIGNMENT"),
         #("LAND","LANDLORDS"),
         #("LAND","LANDLORNS"),
         #("F","FLOW"),
@@ -742,7 +777,7 @@ def custom_test():
             print(color['yellow'] + "Minimal Edit Distance: " + color['default'] + str(min_edit_dist))
 
     if custom_test_settings['TEST_WORD_CORPUS']:
-        batch_word("./word_corpus.txt")
+        batch_word("InputFiles/word_corpus.txt", "OutputFiles/word_edit_distance.txt")
 
 if __name__ == '__main__':
     import os

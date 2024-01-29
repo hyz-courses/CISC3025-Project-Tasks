@@ -280,7 +280,12 @@ class Node:
         """
         if type(val) != str:
             raise Exception("Child of a node must be a node.")
-        self.left = Node(val)
+
+        if self.left is None:
+            self.left = Node([val])
+        else:
+            arr = self.left.get_val()
+            arr.append(val)
 
 
     def set_mid(self, val):
@@ -390,6 +395,10 @@ def word_edit_distance(x, y):
     x_arr = [ch for ch in x]
     y_arr = [ch for ch in y]
 
+    # 4-1.2 Align strings with different length into same length.
+    # Note: I found out this is not necessary....
+    [x_arr, y_arr] = align_length(x_arr, y_arr)
+
     # 4-1.3. Insert array element into a single-sided tree.
     x_init_node = Node("#")
     y_init_node = Node("#")
@@ -417,7 +426,7 @@ def word_edit_distance(x, y):
     4-3. Traverse the tree, add hyphen mark to the other side 
     of the tree when required (ins, del).
     '''
-    #TODO: There may be some problem with this. 应该用三叉树
+    #TODO: There may be some problem with this. 应该用三叉树????
 
     # 4-3.1. Initialize array pointer and track pointer.
     track_ptr = 0
@@ -450,8 +459,8 @@ def word_edit_distance(x, y):
 
     ''' 4.4. Post Processing to Restore array.'''
     # 4.4.1. Remove the blank buffer.
-    x_arr.remove("#")
-    y_arr.remove("#")
+    x_arr = [ch for ch in x_arr if ch != "#"]
+    y_arr = [ch for ch in y_arr if ch != "#"]
 
     # 4.4.2. Reverse the array again to get the alignment.
     alignment = [x_arr,y_arr]
@@ -521,15 +530,40 @@ def traverse(root, result = None):
         # Left node
         traverse(root.get_left(),result)
         # Visit root
-        result.append(root.val)
+        if type(root.get_val()) == list:
+            result.extend(root.get_val())
+        else:
+            result.append(root.val)
         # Right node
         traverse(root.get_right(), result)
         # Next node
         traverse(root.get_mid(), result)
     return result
 
-def generate_alignment(x_arr, y_arr, op_track):
-    pass
+def align_length(x_arr,y_arr):
+    """
+    Align strings of different length into same length.
+    :param x_arr: First string.
+    :param y_arr: Second string.
+    :return: Aligned strings.
+    """
+    if len(x_arr) == len(y_arr):
+        return x_arr, y_arr
+
+    # Find whichever array that's shorter
+    short_arr = x_arr if len(x_arr) < len(y_arr) else y_arr
+    long_arr = x_arr if short_arr == y_arr else y_arr
+    is_x_shorter = short_arr == x_arr
+
+    # Number of len(long_arr)-len(short_arr) is appended to short array.
+    num_of_blanks = len(long_arr) - len(short_arr)
+    short_arr.extend(["#"] * num_of_blanks)
+
+    # Restoring
+    x_arr = short_arr if is_x_shorter else long_arr
+    y_arr = short_arr if x_arr == long_arr else long_arr
+
+    return x_arr, y_arr
 
 def sentence_edit_distance(x, y):
     """
@@ -600,12 +634,16 @@ def output_alignment(alignment):
     print('')
     return
 
-def batch_word(inputfile,outputfile):
+def batch_word(input_file, output_file=None):
     #implement the function to finish the requirement 3
     #TODO:
     #   read the samples from the input file (i.e. word_corpus.txt), notice that the number of the hypothesis is maybe diverse
     #   use the function word_edit_distance to calculate the edit distance between the reference hand each hypothesis
     #   output the result in the file 'word_edit_distance.txt' with the required format
+    with open(input_file, "r") as f:
+        data = f.readlines()
+        print(data)
+
     return
 
 def batch_sentence(inputfile,outputfile):
@@ -645,11 +683,17 @@ def custom_test():
     custom_test_settings = {
         "TEST_WORD": True,
         "TEST_SENTENCE": False,
+        "TEST_WORD_CORPUS":False,
     }
 
     test_subjects_word=[
         #("EXECUTION", "INTENTION"),     # Course example
         ("ALIGN","ALIGNMENT"),
+        #("LAND","LANDLORDS"),
+        #("LAND","LANDLORNS"),
+        #("F","FLOW"),
+        #("","DYNAMIC"),
+        #("ALIGN","ALIGNMENT"),
         #("AGGCTATCAC","TAGCTGTCAC"),    # Alternative ins and del
         #("HAPPY","HAPPY"),              # Exact same
         #("EXTENSION", "INTENTION"),     # Different but no ins or del
@@ -696,6 +740,9 @@ def custom_test():
             print(test_subject[0] + " & " + test_subject[1])
             [min_edit_dist, alignment] = sentence_edit_distance(test_subject[0],test_subject[1])
             print(color['yellow'] + "Minimal Edit Distance: " + color['default'] + str(min_edit_dist))
+
+    if custom_test_settings['TEST_WORD_CORPUS']:
+        batch_word("./word_corpus.txt")
 
 if __name__ == '__main__':
     import os

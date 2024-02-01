@@ -15,10 +15,10 @@ import re
 # Please set all values to false before running.
 custom_settings = {
     "TEST_MODE": False,                  # Run custom_test() func instead of main()
-    "PRINT_TABLE": True,                # Print value & operation table.
-    "PRINT_TRACK": True,                # Print the backtracked operation array.
-    "PRINT_PREPROC_ARRAY": True,
-    "PRINT_ALIGNMENT_ARRAY": True       # Print the alignment array.
+    "PRINT_TABLE": False,                # Print value & operation table.
+    "PRINT_TRACK": False,                # Print the backtracked operation array.
+    "PRINT_PREPROC_ARRAY": False,        # Print the processed array for restoration.
+    "PRINT_ALIGNMENT_ARRAY": False       # Print the alignment array.
 }
 
 # ANSI Colors: For better distinguishable in console.

@@ -15,9 +15,10 @@ import re
 # Please set all values to false before running.
 custom_settings = {
     "TEST_MODE": False,                  # Run custom_test() func instead of main()
-    "PRINT_TABLE": False,                # Print value & operation table.
-    "PRINT_TRACK": False,                # Print the backtracked operation array.
-    "PRINT_ALIGNMENT_ARRAY": False       # Print the alignment array.
+    "PRINT_TABLE": True,                # Print value & operation table.
+    "PRINT_TRACK": True,                # Print the backtracked operation array.
+    "PRINT_PREPROC_ARRAY": True,
+    "PRINT_ALIGNMENT_ARRAY": True       # Print the alignment array.
 }
 
 # ANSI Colors: For better distinguishable in console.
@@ -408,6 +409,9 @@ def word_edit_distance(x, y):
     # Note: I found it not necessary to really make the two strings the same length.
     # However, it works, so I decide not to change it.
     [x_arr, y_arr] = align_length(x_arr, y_arr)
+    if custom_settings['PRINT_PREPROC_ARRAY']:
+        print(x_arr)
+        print(y_arr)
 
     # 4-1.3. Insert array element into a single-sided tree.
     x_init_node = Node("#")
@@ -443,6 +447,9 @@ def word_edit_distance(x, y):
 
     # 4-3.2. Traversing the tree, adding hyphens.
     while x_node_ptr is not None and y_node_ptr is not None:
+        if track_ptr >= len(op_track):
+            # Somehow I should add this to prevent index out of bounds in op_track.
+            break
         # Stop criteria: One of them reaches end (in this case words have different length).
         if op_track[track_ptr] == edit_code['ins']:
             # Insertion.
@@ -556,6 +563,8 @@ def align_length(x_arr,y_arr):
     :return: Aligned strings.
     """
     if len(x_arr) == len(y_arr):
+        x_arr.extend(["#"] * 1)
+        y_arr.extend(["#"] * 1)
         return x_arr, y_arr
 
     # Find whichever array that's shorter
@@ -565,7 +574,8 @@ def align_length(x_arr,y_arr):
 
     # Number of len(long_arr)-len(short_arr) is appended to short array.
     num_of_blanks = len(long_arr) - len(short_arr)
-    short_arr.extend(["#"] * num_of_blanks)
+    long_arr.extend(["#"] * 2)      # This should be done otherwise some cases don't fit.
+    short_arr.extend(["#"] * (num_of_blanks + 2))
 
     # Restoring
     x_arr = short_arr if is_x_shorter else long_arr

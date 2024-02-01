@@ -803,7 +803,7 @@ def custom_test():
         #("AB","A"),                     # Double letter
         #("A","B"),                      # Single letter
         #("","A"),                       # Empty string & single letter
-        #("","")                         # Empty string
+        #("",""),                        # Empty string
         #("AGGCTATCACCTGACCTCCAGGCCGATGCCC","TAGCTATCACGACCGCGGTCGATTTGCCCGAC")
     ]
 

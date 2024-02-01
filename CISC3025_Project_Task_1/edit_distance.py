@@ -20,7 +20,7 @@ custom_settings = {
     "PRINT_ALIGNMENT_ARRAY": False       # Print the alignment array.
 }
 
-# ANSI Colors: For better distinguishablility in console.
+# ANSI Colors: For better distinguishable in console.
 color = {
     "green": "\033[32m",
     "yellow": "\033[33m",
@@ -28,6 +28,7 @@ color = {
 }
 
 # Pointer Operations Codes
+# Given index, get code string.
 edit = [    # Index -> Code
     '-',    # 0. Match
     'i',    # 1. Insertion
@@ -36,6 +37,7 @@ edit = [    # Index -> Code
     ' '     # 4. Initialization value, i.e. "Unknown"
 ]
 
+# Given code string, get index.
 edit_code = {   # Code -> Index
     'mch': 0,
     'ins': 1,
@@ -276,11 +278,11 @@ class Node:
 
     def set_left(self, val):
         """
-        Set the value of left child node. Value must be string.
+        Insert a value of left child node. Value must be string.
         :param val: Intended value to be set.
         """
         if type(val) != str:
-            raise Exception("Child of a node must be a node.")
+            raise Exception("Invalid Value: Value must be string.")
 
         if self.left is None:
             self.left = Node([val])
@@ -300,12 +302,17 @@ class Node:
 
     def set_right(self, val):
         """
-        Set the value of right child node. Value must be string.
+        Insert the value of right child node. Value must be string.
         :param val: Intended value to be set.
         """
         if type(val) != str:
             raise Exception("Child of a node must be a node.")
-        self.right = Node(val)
+
+        if self.right is None:
+            self.right = Node(val)
+        else:
+            arr = self.right.get_val()
+            arr.append(val)
 
 def word_edit_distance(x, y):
     """
@@ -357,6 +364,7 @@ def word_edit_distance(x, y):
     ptr_table.levenshtein_init(is_val=False)
 
     """ Step 3. Gradually fill in the table using the rules of Levenstein distance. """
+    # This is the dynamic programming process.
     for j in range(1, table_len_y):
         for i in range(1, table_len_x):
 
@@ -397,7 +405,8 @@ def word_edit_distance(x, y):
     y_arr = [ch for ch in y]
 
     # 4-1.2 Align strings with different length into same length.
-    # Note: I found out this is not necessary....
+    # Note: I found it not necessary to really make the two strings the same length.
+    # However, it works, so I decide not to change it.
     [x_arr, y_arr] = align_length(x_arr, y_arr)
 
     # 4-1.3. Insert array element into a single-sided tree.

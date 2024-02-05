@@ -380,12 +380,13 @@ def word_edit_distance(x, y):
             op = " "                    # Operation code: sub, ins, del
 
             # Prioritized selection: When all equal, priority sub > ins > del.
-            if sub_cost == op_cost:
+            if del_cost == op_cost:
+                op = edit_code['del']
+            elif sub_cost == op_cost:
                 op = edit_code['sub'] if x[i-1] != y[j-1] else edit_code['mch']
             elif ins_cost == op_cost:
                 op = edit_code['ins']
-            elif del_cost == op_cost:
-                op = edit_code['del']
+
 
             # Perform write to the two tables.
             val_table.write(i, j, op_cost)

@@ -13,6 +13,10 @@ from collections import Counter
 input_file = './data/train.json'
 output_file = './output/word_count.txt'
 
+custom_settings = {
+    "WRITE_DATA": False
+}
+
 
 def count_word(input_file_path, output_file_path):
     # ---------- 1. Preparation ------------#
@@ -20,6 +24,8 @@ def count_word(input_file_path, output_file_path):
     # 1.1 Open file, read json data.
     with open(input_file_path, 'r') as f:
         train_data = json.load(f)
+
+    print(train_data)
 
     # 1.2 Map class name to index number.
     class_map = {
@@ -114,26 +120,23 @@ def count_word(input_file_path, output_file_path):
     # 5.1 Print class data
     class_freq_str = ""
     for num in class_freq:
-        print(num, end=" ")
         class_freq_str += str(num) + " "
-    print("\n")
     class_freq_str += "\n"
 
     # 5.2 Print Term frequency
     token_data_arr = []
     for index, row in tf_matrix.iterrows():
         # Current word
-        print(index, end=" ")
         cur_data_arr = str(index) + " "
         # The frequencies in each class
         for value in row.values:
-            print(value, end=" ")
             cur_data_arr += str(value) + " "
-        print("\n")
         cur_data_arr += "\n"
         token_data_arr.append(cur_data_arr)
 
     # 5.3 Write files
+    if custom_settings['WRITE_DATA'] is False:
+        return
     with open(output_file_path, "w") as o_file:
         o_file.write(class_freq_str)
         for row in token_data_arr:

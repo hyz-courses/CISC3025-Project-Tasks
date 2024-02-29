@@ -29,6 +29,7 @@ def count_word(input_file_path, output_file_path):
         'acq': 3,
         'earn': 4
     }
+    classes = ['crude', 'grain', 'money-fx', 'acq', 'earn']
 
     # 1.3 Initialize the frequency vector of classes.
     # Order: crude, grain, money-fx, acq, earn
@@ -54,7 +55,7 @@ def count_word(input_file_path, output_file_path):
 
         # 2.2.1 Replace common delimiters by a single space and eliminate some useless characters.
         # Remove double-commas, abbreviation marks, brackets, and continuous hyphens.
-        cur_sentence = re.sub(r'\"|\.\.+|\(|\)|\s--+\s', ' ', cur_sentence)
+        cur_sentence = re.sub(r'\"|\.\.+|\(|\)|\s--+\s|(?<=[A-Za-z])/|&[a-z]+;|>', ' ', cur_sentence)
         # Remove period, comma, question mark and exclamation mark followed by a  space as common delimiters.
         # Leave abbreviations alone, like U.S. or U.K.
         cur_sentence = re.sub(r'(?<![A-Z])([.,?!"]\s+)', ' ', cur_sentence)
@@ -66,8 +67,8 @@ def count_word(input_file_path, output_file_path):
         # 2.2.3 Post processing:
         # Remove remaining cases where there's a punctuation mark at the end of a word.
         for word in _cur_token_array:
-            word = word.rstrip(',?!"')
-            cur_token_array.append(word)
+            word = word.rstrip(',?!"-')
+            cur_token_array.append(word) if word != "-" or "" else None
 
         # 2.3 Summarize Data
         # 2.3.1 Array Part
@@ -90,10 +91,8 @@ def count_word(input_file_path, output_file_path):
     # -------4. Summarize instances for each word.-------#
     print("Summarizing Data ...")
     # 4.1 Initialize term frequency matrix using vocabulary as index.
-    # Row num: Vocab size; Col num: Num of class, i.e. 5.
-    tf_matrix = pd.DataFrame(
-        np.zeros((len(vocab), 5), dtype=int),
-        index=vocab,)
+    # Row num: Vocab size; Col num: Num of class, i.e. 5. Last row: sum of each row.
+    tf_matrix = pd.DataFrame(np.zeros((len(vocab), 6), dtype=int), index=vocab)
 
     # 4.2 For all words in the vocabulary
     for index, row in enumerate(tokenized_test_data_freq):
@@ -102,13 +101,14 @@ def count_word(input_file_path, output_file_path):
         for key, value in cur_token_dict.items():
             # Accumulate corresponding value of instance to the correct class in the matrix.
             tf_matrix.loc[key, class_map[cur_class]] += value
+            # Also, record this accumulation in the last row.
+            tf_matrix.loc[key, 5] += value
 
     # 4.3 Post process the token frequency matrix.
-    # # 4.3.1 Calculate the sum of values in each row
-    # row_sums = tf_matrix.sum()
-    # print(row_sums)
-    # # 4.3.2 Sort the DataFrame based on the row sums
-    # tf_matrix = tf_matrix[row_sums.sort_values(ascending=False).index]
+    # Sort this matrix using the last row.
+    tf_matrix = tf_matrix.sort_values(by=5, ascending=False)
+    # Since this matrix is sorted, drop the last row.
+    tf_matrix = tf_matrix.iloc[:, :-1]
 
     # --------------5. Print and write data---------------#
     # 5.1 Print class data

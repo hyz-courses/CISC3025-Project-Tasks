@@ -19,32 +19,27 @@ custom_settings = {
     "WRITE_DATA": False
 }
 
+class_map = {
+    'crude': 0,
+    'grain': 1,
+    'money-fx': 2,
+    'acq': 3,
+    'earn': 4
+}
+classes = ['crude', 'grain', 'money-fx', 'acq', 'earn']
+
 
 def count_word(input_file_path, output_file_path):
     # ---------- 1. Preparation ------------#
-    print("Opening File...")
-    # 1.1 Open file, read json data.
-    with open(input_file_path, 'r') as f:
-        train_data = json.load(f)
-
-    print(train_data)
-
-    # 1.2 Map class name to index number.
-    class_map = {
-        'crude': 0,
-        'grain': 1,
-        'money-fx': 2,
-        'acq': 3,
-        'earn': 4
-    }
-    classes = ['crude', 'grain', 'money-fx', 'acq', 'earn']
-
-    # 1.4 Prepare tokenizer
     # Tokenizer: Split sentence using space characters.
     tokenizer = nltk.tokenize.RegexpTokenizer(r'[\s]+', gaps=True)
 
-    # ------------ 2. Process Data -------------#
-    class_freq, train_class_sentence_list, train_class_dict_list = __funcs__.extract_data_from_json(input_file_path, tokenizer)
+    # ---------- 2. Process Data -----------#
+    [
+        class_freq,
+        train_class_sentence_list,
+        train_class_dict_list
+    ] = __funcs__.extract_data_from_json(input_file_path, tokenizer)
 
     # ----------------3. Make Vocabulary ---------------#
     print("Making Vocab...")

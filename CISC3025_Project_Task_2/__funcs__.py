@@ -7,6 +7,7 @@ from collections import Counter
 
 settings = {
     "PRINT_PROCESS": True,
+    "WRITE_FILES": True,
 }
 
 # ANSI Colors: For better distinguishable in console.
@@ -27,12 +28,13 @@ class_map = {
 classes = ['crude', 'grain', 'money-fx', 'acq', 'earn']
 
 
-def extract_data_from_txt(input_file, tokenizer, max_threshold=None, include_first_line=False):
+def extract_data_from_txt(input_file, tokenizer, max_threshold=None, include_first_line=False, convert_to_int=True):
     """
     :param input_file: Path to the input txt file;
     :param tokenizer: Tokenizer object;
     :param max_threshold: Threshold of selecting input txt lines. Default None;
-    :include_first_line: Whether to read the first line of the input txt file.
+    :param include_first_line: Whether to read the first line of the input txt file.
+    :param convert_to_int: Convert to integer.
 
     This function extracts data from txt file and turn them into a list of pairs.
     The first element of the pair is the word in the vocabulary;
@@ -61,7 +63,8 @@ def extract_data_from_txt(input_file, tokenizer, max_threshold=None, include_fir
             # 2.2 Separate words and frequencies.
             cur_word = cur_data_set[0]          # Current word
             cur_data_set = cur_data_set[1:]     # Slice the first word, leaving the frequencies.
-            cur_data_set = [int(num) for num in cur_data_set]    # Convert string to int
+            if convert_to_int:
+                cur_data_set = [int(num) for num in cur_data_set]   # Convert string to int
 
             # Summarize
             # Sample row: ['apple',[10,44,13,1918,809]]
@@ -86,7 +89,7 @@ def write_data_to_txt(first_line, word_datas_tuples, output_file):
 
     # Word Features
     with open(output_file, 'w') as o_file:
-        o_file.write(first_line_str)
+        o_file.write(first_line_str) if settings['WRITE_FILES'] else None
         print(first_line_str) if settings['PRINT_PROCESS'] else None
 
         for index, instance in enumerate(word_datas_tuples):
@@ -103,7 +106,7 @@ def write_data_to_txt(first_line, word_datas_tuples, output_file):
             cur_word_data_str += "\n"
 
             # Finally, write the processed string into file.
-            o_file.write(cur_word_data_str)
+            o_file.write(cur_word_data_str) if settings['WRITE_FILES'] else None
 
             if not settings['PRINT_PROCESS']:
                 continue

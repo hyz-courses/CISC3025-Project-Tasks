@@ -1,6 +1,7 @@
 import json
 import re
 import nltk
+import math
 import pandas as pd
 import numpy as np
 from collections import Counter
@@ -11,7 +12,7 @@ import __funcs__
 settings = __funcs__.settings
 
 
-def word_probability(input_files, output_file=None, add_alpha=0, precision=None):
+def word_probability(input_files, output_file=None, add_alpha=0, precision=None, use_log=False):
     # -----------------1.Preparation----------------- #
     tokenizer = nltk.tokenize.RegexpTokenizer(r'[\s]+', gaps=True)
 
@@ -39,6 +40,10 @@ def word_probability(input_files, output_file=None, add_alpha=0, precision=None)
     # 2.3 Document probabilities in each class. (Portion of each class)
     doc_probs_for_each_class_arr = [num/num_of_docs for num in doc_freqs_for_each_class_arr]
 
+    # 2.4 If required, convert to log space.
+    if use_log:
+        doc_probs_for_each_class_arr = [-math.log(num) for num in doc_probs_for_each_class_arr]
+
     # -----------------3. Prob of each word----------------- #
     # 3.1 Convert number string into integer. Get word frequencies for each class.
     word_freqs_for_each_class_arr = [int(num_str) for num_str in word_freqs_for_each_class_arr]
@@ -62,6 +67,9 @@ def word_probability(input_files, output_file=None, add_alpha=0, precision=None)
         if precision is not None:
             cur_word_probs = [round(num, precision) for num in cur_word_probs]
 
+        if use_log:
+            cur_word_probs = [-math.log(num) for num in cur_word_probs]
+
         # 3.2.3 Append word and probs into list
         feature_word_probs.append([cur_word, cur_word_probs])
 
@@ -76,5 +84,14 @@ word_probability(
     ["./output/word_count.txt", "./output/word_dict.txt"],
     output_file="./output/word_probability.txt",
     add_alpha=1,
+    use_log=False
+    # precision=4   # Control digits after dot.
+)
+
+word_probability(
+    ["./output/word_count.txt", "./output/word_dict.txt"],
+    output_file="./temp_output/word_probability_log.txt",
+    add_alpha=1,
+    use_log=True
     # precision=4   # Control digits after dot.
 )

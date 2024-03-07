@@ -131,6 +131,7 @@ def extract_data_from_json(input_file_path, tokenizer, include_id=False):
     class_freqs = [0, 0, 0, 0, 0]       # Document frequencies for each class.
     t_class_sentence_list = []          # Instance example: [class_name, ['token1', 'token2','token1']]
     t_class_dict_list = []              # Instance example: [class_name, {'token1':2, 'token2':1}]
+    stemmer = nltk.PorterStemmer()
 
     # 1.2 Open file, read json data.
     with open(input_file_path, 'r') as f:
@@ -165,7 +166,10 @@ def extract_data_from_json(input_file_path, tokenizer, include_id=False):
         # 2.5 Post-processing. Remove remaining cases where there's a punctuation mark at the end of a word.
         for word in _cur_token_array:
             word = word.rstrip(',?!"-')
+            word = word.lower()
             cur_token_array.append(word) if word != "-" or "" else None
+
+        cur_token_array = [stemmer.stem(word) for word in cur_token_array]
 
         # 2.6 Summarize Data
         # 2.6.1 Array Part
@@ -181,8 +185,5 @@ def extract_data_from_json(input_file_path, tokenizer, include_id=False):
         if include_id is True:
             t_class_dict.append(cur_file_id)
         t_class_dict_list.append(t_class_dict)
-
-        # 2.6.3 File ID
-
 
     return class_freqs, t_class_sentence_list, t_class_dict_list

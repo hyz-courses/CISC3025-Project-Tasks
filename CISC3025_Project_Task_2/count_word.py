@@ -16,7 +16,7 @@ input_file = './data/train.json'
 output_file = './output/word_count.txt'
 
 custom_settings = {
-    "WRITE_DATA": False
+    "WRITE_DATA": True
 }
 
 class_map = {

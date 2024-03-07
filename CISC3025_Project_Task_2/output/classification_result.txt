@@ -46,8 +46,8 @@ test/15527 money-fx
 test/17671 acq
 test/15366 acq
 test/16410 earn
-test/15194 grain
-test/18569 earn
+test/15194 money-fx
+test/18569 acq
 test/15351 crude
 test/16432 earn
 test/15451 earn
@@ -130,15 +130,15 @@ test/15274 earn
 test/19379 acq
 test/20297 acq
 test/16884 earn
-test/15913 money-fx
+test/15913 earn
 test/19790 earn
-test/15396 earn
+test/15396 crude
 test/15048 money-fx
 test/16303 earn
 test/17597 acq
 test/18704 crude
 test/14978 acq
-test/19255 crude
+test/19255 grain
 test/18585 acq
 test/19711 acq
 test/16331 money-fx
@@ -249,7 +249,7 @@ test/15283 earn
 test/20882 crude
 test/20974 earn
 test/21281 earn
-test/20352 acq
+test/20352 crude
 test/19856 acq
 test/15909 earn
 test/17860 acq
@@ -325,7 +325,7 @@ test/19240 acq
 test/20412 earn
 test/16641 earn
 test/18035 grain
-test/15494 earn
+test/15494 acq
 test/16496 earn
 test/15450 money-fx
 test/20869 crude
@@ -426,7 +426,7 @@ test/15668 earn
 test/18040 acq
 test/21416 earn
 test/15548 earn
-test/20662 acq
+test/20662 crude
 test/19703 acq
 test/19921 acq
 test/20738 grain
@@ -445,7 +445,7 @@ test/15372 money-fx
 test/19872 acq
 test/18577 acq
 test/18180 earn
-test/19418 money-fx
+test/19418 earn
 test/15124 acq
 test/15307 earn
 test/17487 acq
@@ -466,7 +466,7 @@ test/16816 earn
 test/20457 acq
 test/19462 acq
 test/16638 earn
-test/20921 earn
+test/20921 acq
 test/20496 money-fx
 test/20529 earn
 test/20600 earn
@@ -557,7 +557,7 @@ test/17035 earn
 test/14964 money-fx
 test/19344 acq
 test/21454 acq
-test/15020 earn
+test/15020 acq
 test/15302 acq
 test/15425 acq
 test/20117 earn
@@ -589,7 +589,7 @@ test/20348 money-fx
 test/20137 acq
 test/16016 earn
 test/15448 money-fx
-test/15674 acq
+test/15674 earn
 test/16320 acq
 test/16233 acq
 test/16921 earn
@@ -735,7 +735,7 @@ test/15906 grain
 test/18363 money-fx
 test/15853 grain
 test/19998 crude
-test/19828 crude
+test/19828 acq
 test/15964 crude
 test/21274 crude
 test/16725 earn
@@ -912,7 +912,7 @@ test/21190 earn
 test/15808 acq
 test/20376 earn
 test/16002 acq
-test/17816 crude
+test/17816 acq
 test/21360 earn
 test/16026 acq
 test/17866 acq
@@ -1008,7 +1008,7 @@ test/19683 acq
 test/20500 money-fx
 test/16405 earn
 test/16568 earn
-test/16262 acq
+test/16262 earn
 test/20817 earn
 test/20395 earn
 test/15341 grain
@@ -1045,7 +1045,7 @@ test/17751 earn
 test/19913 acq
 test/15904 grain
 test/21128 money-fx
-test/15583 earn
+test/15583 acq
 test/15452 money-fx
 test/20095 crude
 test/15001 acq
@@ -1216,7 +1216,7 @@ test/16374 earn
 test/20442 earn
 test/20398 acq
 test/20775 acq
-test/21368 crude
+test/21368 grain
 test/15807 earn
 test/19286 acq
 test/15785 acq
@@ -1348,7 +1348,7 @@ test/20692 crude
 test/20803 earn
 test/18017 acq
 test/20118 earn
-test/14843 money-fx
+test/14843 acq
 test/16251 money-fx
 test/16838 earn
 test/16636 crude
@@ -1485,7 +1485,7 @@ test/14968 earn
 test/16513 acq
 test/18699 earn
 test/18158 earn
-test/15069 grain
+test/15069 acq
 test/20319 earn
 test/16163 acq
 test/20284 earn
@@ -1529,7 +1529,7 @@ test/19501 acq
 test/16813 earn
 test/21286 earn
 test/16486 earn
-test/19069 crude
+test/19069 grain
 test/17595 acq
 test/17911 acq
 test/20531 earn
@@ -1590,7 +1590,7 @@ test/15585 acq
 test/18146 crude
 test/21073 acq
 test/20525 acq
-test/15107 acq
+test/15107 earn
 test/17523 money-fx
 test/15777 earn
 test/20711 earn
@@ -1889,7 +1889,7 @@ test/19744 acq
 test/16275 earn
 test/20652 earn
 test/15695 earn
-test/15478 earn
+test/15478 acq
 test/15625 money-fx
 test/19996 crude
 test/19667 earn
@@ -1966,7 +1966,7 @@ test/16714 acq
 test/16366 crude
 test/20009 money-fx
 test/16719 earn
-test/15312 earn
+test/15312 acq
 test/20279 earn
 test/21091 grain
 test/19420 acq
@@ -2222,7 +2222,7 @@ test/20784 earn
 test/20207 earn
 test/16285 money-fx
 test/20862 money-fx
-test/14859 earn
+test/14859 acq
 test/17478 crude
 test/15234 money-fx
 test/16654 earn
@@ -2233,7 +2233,7 @@ test/14919 money-fx
 test/21113 earn
 test/19812 earn
 test/16519 acq
-test/20052 money-fx
+test/20052 grain
 test/21451 earn
 test/15561 acq
 test/18609 grain

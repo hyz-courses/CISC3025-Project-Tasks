@@ -1,5 +1,5 @@
 '''
-CISC3025-Project-Task-02 Requirement 1: Count words
+CISC3025-Project-Task-02 Requirement 1: Count Words
 '''
 
 import os

@@ -1,3 +1,8 @@
+"""
+CISC3025-Project-Task-02 Requirement 2: Feature Selection.
+Select the first 10,000 features ordered by frequency of occurrence extracted from the training data.
+"""
+
 import json
 import re
 import nltk
@@ -12,10 +17,10 @@ from __funcs__ import settings
 
 def feature_selection(input_file, threshold=None, output_file=None):
     # -------------- 1. Preparation ---------------#
-    # Initialize Tokenizer
+    # 1.1 Initialize Tokenizer
     tokenizer = nltk.tokenize.RegexpTokenizer(r'[\s]+', gaps=True)
 
-    # Class Frequency
+    # 1.2 Initialize Class Frequency Vector
     word_freqs_for_each_class_arr = [0, 0, 0, 0, 0]
 
     # ---------- 2. Read & Extract Data ------------#
@@ -33,7 +38,7 @@ def feature_selection(input_file, threshold=None, output_file=None):
 
     # --------------- 4. Write Data ----------------#
     if output_file is None:
-        return
+        return word_freqs_for_each_class_arr, selected_features
 
     __funcs__.write_data_to_txt(word_freqs_for_each_class_arr, selected_features, output_file)
 

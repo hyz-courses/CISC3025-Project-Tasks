@@ -1,3 +1,7 @@
+'''
+CISC3025-Project-Task-02 Requirement 3: Word Probability
+'''
+
 import json
 import re
 import nltk

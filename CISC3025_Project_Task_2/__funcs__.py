@@ -79,6 +79,8 @@ def write_data_to_txt(first_line, word_datas_tuples, output_file):
     :param first_line: A length-5 list of data.
     :param word_datas_tuples: A pair of word-data. Data is a length-5 list of numeric data assigned to a word.
     :param output_file: File path to the output file.
+
+    This function writes data into the output file.
     """
 
     # First line
@@ -118,47 +120,57 @@ def write_data_to_txt(first_line, word_datas_tuples, output_file):
 
 
 def extract_data_from_json(input_file_path, tokenizer):
-    # Initialize Output
-    class_freqs = [0, 0, 0, 0, 0]   # Class Frequencies
-    t_class_sentence_list = []        # Instance example: [class_name, ['token1', 'token2','token1']]
-    t_class_dict_list = []   # Instance example: [class_name, {'token1':2, 'token2':1}]
+    """
+    :param input_file_path: Path to the input .json file.
+    :param tokenizer: Tokenizer that uses the compiled delimiter rules to tokenize long sentences.
+    """
 
-    # Open file, read json data.
+    # ------------ 1. Preparation ------------- #
+    # 1.1 Initialize Output
+    class_freqs = [0, 0, 0, 0, 0]       # Document frequencies for each class.
+    t_class_sentence_list = []          # Instance example: [class_name, ['token1', 'token2','token1']]
+    t_class_dict_list = []              # Instance example: [class_name, {'token1':2, 'token2':1}]
+
+    # 1.2 Open file, read json data.
     with open(input_file_path, 'r') as f:
         class_and_sentence_list = json.load(f)
 
+    # ------------- 2. Extraction -------------#
     for instance in class_and_sentence_list:
+        # For each instance of form [class_name, "token1 token2 token3 ..."]:
+
+        # 2.1 Record the class of this instance and accumulate doc freq.
         cur_class = instance[1]
         class_freqs[class_map[cur_class]] += 1
 
+        # 2.2 Record current un-tokenized sentence.
         cur_sentence = instance[2]
 
-        # Replace common delimiters by a single space and eliminate some useless characters.
+        # 2.3 Pre-process the sentence for further tokenization.
+        # 2.3.1 Replace common delimiters by a single space and eliminate some useless characters.
         # Remove double-commas, abbreviation marks, brackets, and continuous hyphens.
         cur_sentence = re.sub(r'\"|\.\.+|\(|\)|\s--+\s|(?<=[A-Za-z])/|&[a-z]+;|>', ' ', cur_sentence)
-        # Remove period, comma, question mark and exclamation mark followed by a  space as common delimiters.
+        # 2.3.2 Remove period, comma, question mark and exclamation mark followed by a  space as common delimiters.
         # Leave abbreviations alone, like U.S. or U.K.
         cur_sentence = re.sub(r'(?<![A-Z])([.,?!"]\s+)', ' ', cur_sentence)
 
-        # Tokenize current sentence.
+        # 2.4 Tokenize current sentence.
         _cur_token_array = tokenizer.tokenize(cur_sentence)
         cur_token_array = []
 
-        # Post-processing:
-        # Remove remaining cases where there's a punctuation mark at the end of a word.
+        # 2.5 Post-processing. Remove remaining cases where there's a punctuation mark at the end of a word.
         for word in _cur_token_array:
             word = word.rstrip(',?!"-')
             cur_token_array.append(word) if word != "-" or "" else None
 
-        # Summarize Data
-        # Array Part
+        # 2.6 Summarize Data
+        # 2.6.1 Array Part
         t_class_sentence = [cur_class, cur_token_array]
         t_class_sentence_list.append(t_class_sentence)
 
-        # Frequency part
+        # 2.6.2 Frequency part
         cur_freq_dict = Counter(cur_token_array)
         cur_freq_dict = dict(cur_freq_dict)
-
         t_class_dict = [cur_class, cur_freq_dict]
         t_class_dict_list.append(t_class_dict)
 

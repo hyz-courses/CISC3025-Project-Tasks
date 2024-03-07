@@ -43,45 +43,71 @@ def classification(input_file_path, output_file_path):
     # 2.2 For all c in C, convert string to float. Get -log[P(c)] for all c in C.
     log_neg_doc_probs_for_each_class = [float(num) for num in log_neg_doc_probs_for_each_class]
 
-    # 2.3 For each word-probs pairs, convert string to float. And calculate joined probs.
-    # Get -log[P(w|c)] for all words in all classes.
-    log_neg_word_probs_arr = []
+    # 2.3 For each ['word',['prob1','prob2','prob3','prob4','prob5']]:
+    # Convert string to float. Get ['w',[ -log[P(w|c1)], -log[P(w|c2)], -log[P(w|c3)], -log[P(w|c4)], -log[P(w|c5)]]].
+    log_neg_word_probs_dict = {}
     for instance in _log_neg_word_probs_arr:
         # 4.3.1 Basic data.
-        cur_word = instance[0]                  # Current Word
-        _cur_log_neg_word_probs = instance[1]    # Current Prob in string format
+        cur_word = instance[0]                   # Current Word
+        _cur_log_neg_word_probs = instance[1]    # Current str(-log[P(w|c)]) for all c in C of this word.
 
         # 4.3.2 Convert float to string.
         cur_log_neg_word_probs = [float(num) for num in _cur_log_neg_word_probs]     # -log[P(w|c)] for all c
-        log_neg_word_probs_arr.append([cur_word, cur_log_neg_word_probs])
+        log_neg_word_probs_dict[cur_word] = cur_log_neg_word_probs
 
     # ------------- 3. Calculate Naive Bayes Prob -------------#
+    # 3.1 Retrieve test data.
     [
-        test_class_freq,
-        test_word_sentence_list,
-        test_word_dict_list
+        test_class_freq,            # [freq1, freq2, freq3, freq4, freq5]
+        test_word_sentence_list,    # ['class', ['word1', 'word2', 'word1',...]]
+        test_word_dict_list         # ['class', {'word1':2, 'word2':1,...}]
     ] = __funcs__.extract_data_from_json(input_file_path, tokenizer)
 
+    # 3.2 Retrieve training data.
+    [
+        train_class_freq,            # [freq1, freq2, freq3, freq4, freq5]
+        train_word_sentence_list,    # ['class', ['word1', 'word2', 'word1',...]]
+        train_word_dict_list         # ['class', {'word1':2, 'word2':1,...}]
+    ] = __funcs__.extract_data_from_json("./data/train.json", tokenizer)
+
+    # 3.2 Create vocabulary.
     vocab = set()
-    for instance in test_word_dict_list:
+    for instance in train_word_dict_list:
         for word in instance[1]:
             vocab.add(word)
     vocab = list(vocab)
 
+    # 3.3
     for instance in test_word_sentence_list:
-        test_cur_class = instance[0]
-        test_cur_word_arr = instance[1]
-        print(test_cur_class, end=" ")
-        print(test_cur_word_arr)
+        # For each  ['class', ['word1', 'word2', 'word1',...]]
+        test_cur_class = instance[0]        # Current Class
+        test_cur_word_arr = instance[1]     # Current Sentence ['word1', 'word2', 'word1',...]
 
+        cur_sentence_word_probs_list = []   # [[prob11, prob12, .., prob15],[prob21, prob22, .., prob25]..]
         for word in test_cur_word_arr:
-            # TODO: Index this word in the joined probability matrix.
+            # For each word in ['word1', 'word2', 'word1',...]
 
-            # If present, get the list of joined probs
+            if word in log_neg_word_probs_dict:
+                # If present in training vocab, get the list of joined probs
+                cur_log_neg_word_probs = log_neg_word_probs_dict[word]  # Current
+                pass
 
-            # If not, set the list to empty_prob_val = 1 / (word freqs for class + vocab size)
+            else:
+                # If not, set the list to empty_prob_val = -log(1 / (word freqs for class + vocab size))
+                cur_log_neg_word_probs = [-math.log(1 / (word_freqs + (len(vocab)+1))) for word_freqs in train_class_freq]
+                pass
 
-            pass
+            cur_sentence_word_probs_list.append(cur_log_neg_word_probs)
+
+        cur_sentence_joined_probs = [1, 1, 1, 1, 1]
+        for log_neg_probs in cur_sentence_word_probs_list:
+            for index, log_neg_prob in enumerate(log_neg_probs):
+                cur_sentence_joined_probs[index] += log_neg_prob
+
+        print(__funcs__.classes[np.argmin(cur_sentence_joined_probs)], end=", ")
+        print(test_cur_class)
 
 
-classification(input_file,output_file)
+
+
+classification(input_file, output_file)

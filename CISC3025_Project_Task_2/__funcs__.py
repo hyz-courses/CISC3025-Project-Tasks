@@ -119,10 +119,11 @@ def write_data_to_txt(first_line, word_datas_tuples, output_file):
         o_file.close()
 
 
-def extract_data_from_json(input_file_path, tokenizer):
+def extract_data_from_json(input_file_path, tokenizer, include_id=False):
     """
     :param input_file_path: Path to the input .json file.
     :param tokenizer: Tokenizer that uses the compiled delimiter rules to tokenize long sentences.
+    :param include_id: Whether to include file id.
     """
 
     # ------------ 1. Preparation ------------- #
@@ -138,6 +139,9 @@ def extract_data_from_json(input_file_path, tokenizer):
     # ------------- 2. Extraction -------------#
     for instance in class_and_sentence_list:
         # For each instance of form [class_name, "token1 token2 token3 ..."]:
+
+        # 2.0 Record the file ID
+        cur_file_id = instance[0]
 
         # 2.1 Record the class of this instance and accumulate doc freq.
         cur_class = instance[1]
@@ -166,12 +170,19 @@ def extract_data_from_json(input_file_path, tokenizer):
         # 2.6 Summarize Data
         # 2.6.1 Array Part
         t_class_sentence = [cur_class, cur_token_array]
+        if include_id is True:
+            t_class_sentence.append(cur_file_id)
         t_class_sentence_list.append(t_class_sentence)
 
         # 2.6.2 Frequency part
         cur_freq_dict = Counter(cur_token_array)
         cur_freq_dict = dict(cur_freq_dict)
         t_class_dict = [cur_class, cur_freq_dict]
+        if include_id is True:
+            t_class_dict.append(cur_file_id)
         t_class_dict_list.append(t_class_dict)
+
+        # 2.6.3 File ID
+
 
     return class_freqs, t_class_sentence_list, t_class_dict_list

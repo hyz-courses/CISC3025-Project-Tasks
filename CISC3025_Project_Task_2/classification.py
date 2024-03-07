@@ -61,7 +61,7 @@ def classification(input_file_path, output_file_path):
         test_class_freq,            # [freq1, freq2, freq3, freq4, freq5]
         test_word_sentence_list,    # ['class', ['word1', 'word2', 'word1',...]]
         test_word_dict_list         # ['class', {'word1':2, 'word2':1,...}]
-    ] = __funcs__.extract_data_from_json(input_file_path, tokenizer)
+    ] = __funcs__.extract_data_from_json(input_file_path, tokenizer, include_id=True)
 
     # 3.2 Retrieve training data.
     [
@@ -70,44 +70,66 @@ def classification(input_file_path, output_file_path):
         train_word_dict_list         # ['class', {'word1':2, 'word2':1,...}]
     ] = __funcs__.extract_data_from_json("./data/train.json", tokenizer)
 
-    # 3.2 Create vocabulary.
+    # 3.2 Create vocabulary for training data.
     vocab = set()
     for instance in train_word_dict_list:
         for word in instance[1]:
             vocab.add(word)
     vocab = list(vocab)
 
-    # 3.3
+    # 3.3 Classify
+    class_pred_tuples = []
     for instance in test_word_sentence_list:
         # For each  ['class', ['word1', 'word2', 'word1',...]]
         test_cur_class = instance[0]        # Current Class
         test_cur_word_arr = instance[1]     # Current Sentence ['word1', 'word2', 'word1',...]
+        test_cur_file_id = instance[2]      # Current File ID
 
+        # 3.3.1 Form a probability matrix for each sentence.
+        # - Column Index: Word tokens in this sentence.
+        # - Row Index: Class.
+        # - Content: -log[P(w|c)], where w, c are the row & column indexes respectively.
         cur_sentence_word_probs_list = []   # [[prob11, prob12, .., prob15],[prob21, prob22, .., prob25]..]
         for word in test_cur_word_arr:
             # For each word in ['word1', 'word2', 'word1',...]
-
             if word in log_neg_word_probs_dict:
                 # If present in training vocab, get the list of joined probs
                 cur_log_neg_word_probs = log_neg_word_probs_dict[word]  # Current
                 pass
-
             else:
                 # If not, set the list to empty_prob_val = -log(1 / (word freqs for class + vocab size))
-                cur_log_neg_word_probs = [-math.log(1 / (word_freqs + (len(vocab)+1))) for word_freqs in train_class_freq]
+                cur_log_neg_word_probs = [
+                    -math.log(1 / (word_freqs + (len(vocab)+1)))
+                    for word_freqs in train_class_freq
+                ]
                 pass
 
             cur_sentence_word_probs_list.append(cur_log_neg_word_probs)
 
+        # 3.3.2 Calculate P(sentence|c) for all class in negative log space.
         cur_sentence_joined_probs = [1, 1, 1, 1, 1]
         for log_neg_probs in cur_sentence_word_probs_list:
             for index, log_neg_prob in enumerate(log_neg_probs):
                 cur_sentence_joined_probs[index] += log_neg_prob
 
-        print(__funcs__.classes[np.argmin(cur_sentence_joined_probs)], end=", ")
-        print(test_cur_class)
+        # 3.3.3 Multiply P(sentence|c) with P(c) for all class in negative log space.
+        cur_sentence_joined_probs = [
+            num + log_neg_doc_probs_for_each_class[index]
+            for index, num in enumerate(cur_sentence_joined_probs)
+        ]
 
+        # 3.3.4 Record data.
+        # Since negative log space is used, the smaller the num the higher the prob.
+        prediction = __funcs__.classes[np.argmin(cur_sentence_joined_probs)]
+        cur_class_pred_tuple = [test_cur_file_id, prediction, test_cur_class]
+        class_pred_tuples.append(cur_class_pred_tuple)
+        print(cur_class_pred_tuple[0], " ", cur_class_pred_tuple[1], " ", cur_class_pred_tuple[2])
 
+    # ------------ 4. Write Data ------------ #
+    with open(output_file_path, 'w') as o_file:
+        for instance in class_pred_tuples:
+            instance_str = instance[0] + " " + instance[1] + "\n"
+            o_file.write(instance_str)
 
 
 classification(input_file, output_file)

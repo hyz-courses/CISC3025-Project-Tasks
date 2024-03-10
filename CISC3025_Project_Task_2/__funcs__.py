@@ -6,7 +6,7 @@ import numpy as np
 from collections import Counter
 
 settings = {
-    "PRINT_PROCESS": True,
+    "PRINT_PROCESS": False,
     "WRITE_FILES": True,
 }
 
@@ -192,3 +192,7 @@ def extract_data_from_json(input_file_path, tokenizer, include_id=False):
         t_class_dict_list.append(t_class_dict)
 
     return class_freqs, t_class_sentence_list, t_class_dict_list
+
+
+def console_log_title(string):
+    print(color['green'] + string + color['default'])

@@ -10,7 +10,7 @@ from collections import Counter
 import __funcs__
 
 
-def evaluation():
+def evaluation(input_file, output_file):
 
     # ------------ 1. Extract list of predict-actual data -------------#
     # 1.1 Initialize tokenizer
@@ -18,7 +18,7 @@ def evaluation():
 
     # 1.2 Get all the predict-actual data
     _, id_predict_actual_list = __funcs__.extract_data_from_txt(
-        "./temp_output/classification_compare.txt",
+        input_file,
         tokenizer,
         convert_to_int=False)
 
@@ -84,7 +84,7 @@ def evaluation():
     print("Micro-Average F-Score: " + str(f_score_micro))
 
     # ----------- 6. Write Result ------------ #
-    with open('./output/f_scores.txt', 'w') as o_file:
+    with open(output_file, 'w') as o_file:
         o_file.write("Precisions: ")
         for prec in precisions:
             o_file.write(str(prec) + " ")
@@ -111,4 +111,4 @@ def evaluation():
             "Micro-Average F-Score: " + str(f_score_micro) + "\n"
         )
 
-evaluation()
+#evaluation()

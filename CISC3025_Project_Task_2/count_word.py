@@ -19,15 +19,6 @@ custom_settings = {
     "WRITE_DATA": True
 }
 
-class_map = {
-    'crude': 0,
-    'grain': 1,
-    'money-fx': 2,
-    'acq': 3,
-    'earn': 4
-}
-classes = ['crude', 'grain', 'money-fx', 'acq', 'earn']
-
 
 def count_word(input_file_path, output_file_path):
     # ---------- 1. Preparation ------------#
@@ -61,7 +52,7 @@ def count_word(input_file_path, output_file_path):
         cur_token_dict = row[1]     # e.g. {"apple": 1, "banana":2, ...}
         for key, value in cur_token_dict.items():
             # Accumulate corresponding value of instance to the correct class in the matrix.
-            tf_matrix.loc[key, class_map[cur_class]] += value
+            tf_matrix.loc[key, __funcs__.class_map[cur_class]] += value
             # Also, record this accumulation in the last row.
             tf_matrix.loc[key, 5] += value
 
@@ -94,11 +85,16 @@ def count_word(input_file_path, output_file_path):
         return tf_matrix
     with open(output_file_path, "w") as o_file:
         o_file.write(class_freq_str)
+        if __funcs__.settings['PRINT_PROCESS']:
+            print(class_freq_str)
+
         for row in token_data_arr:
             o_file.write(row)
+            if __funcs__.settings['PRINT_PROCESS']:
+                print(row)
         o_file.close()
 
     return tf_matrix
 
 
-count_word(input_file, output_file)
+#count_word(input_file, output_file)

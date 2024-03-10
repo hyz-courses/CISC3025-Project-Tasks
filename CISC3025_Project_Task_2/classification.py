@@ -19,9 +19,10 @@ custom_settings = {
 
 input_file = './data/test.json'
 output_file = './output/classification_result.txt'
+temp_output_file = "./temp_output/classification_compare.txt"
 
 
-def classification(input_file_path, output_file_path):
+def classification(input_file_path, output_file_path, temp_output_file_path):
     # ------------ 1.Preparation -------------- #
     # 1.1 Initialize Tokenizer: Split sentence using space characters.
     tokenizer = nltk.tokenize.RegexpTokenizer(r'[\s]+', gaps=True)
@@ -130,7 +131,7 @@ def classification(input_file_path, output_file_path):
             o_file.write(instance_str)
         o_file.close()
 
-    with open("./temp_output/classification_compare.txt", 'w') as to_file:
+    with open(temp_output_file_path, 'w') as to_file:
         to_file.write("\n")
         for instance in class_pred_tuples:
             instance_str = instance[0] + " " + instance[1] + " " + instance[2] + "\n"
@@ -138,4 +139,4 @@ def classification(input_file_path, output_file_path):
         to_file.close()
 
 
-classification(input_file, output_file)
+#classification(input_file, output_file, temp_output_file_path)

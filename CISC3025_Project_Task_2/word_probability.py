@@ -84,18 +84,18 @@ def word_probability(input_files, output_file=None, add_alpha=0, precision=None,
     __funcs__.write_data_to_txt(doc_probs_for_each_class_arr, feature_word_probs, output_file)
 
 
-word_probability(
-    ["./output/word_count.txt", "./output/word_dict.txt"],
-    output_file="./output/word_probability.txt",
-    add_alpha=1,
-    use_log=False
-    # precision=4   # Control digits after dot.
-)
-
-word_probability(
-    ["./output/word_count.txt", "./output/word_dict.txt"],
-    output_file="./temp_output/word_probability_log.txt",
-    add_alpha=1,
-    use_log=True
-    # precision=4   # Control digits after dot.
-)
+# word_probability(
+#     ["./output/word_count.txt", "./output/word_dict.txt"],
+#     output_file="./output/word_probability.txt",
+#     add_alpha=1,
+#     use_log=False
+#     # precision=4   # Control digits after dot.
+# )
+#
+# word_probability(
+#     ["./output/word_count.txt", "./output/word_dict.txt"],
+#     output_file="./temp_output/word_probability_log.txt",
+#     add_alpha=1,
+#     use_log=True
+#     # precision=4   # Control digits after dot.
+# )

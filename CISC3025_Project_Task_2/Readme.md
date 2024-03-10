@@ -15,4 +15,4 @@ Run programs and inspect the terminal for in-process data:
 1. [count_word.py](./count_word.py): Writes into [word count](./output/word_count.txt).
 2. [feature_selection.py](./feature_selection.py): Writes into [word_dict](./output/word_dict.txt)
 3. [word_probability.py](./word_probability.py): Writes into  [word_probability](./output/word_probability.txt).
-4. 
+4. [classification.py](./classification.py): Classifies test data. Writes into [classification_result](./output/classification_result.txt).

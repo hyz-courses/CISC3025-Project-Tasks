@@ -45,4 +45,4 @@ def feature_selection(input_file, threshold=None, output_file=None):
     return word_freqs_for_each_class_arr, selected_features
 
 
-feature_selection('./output/word_count.txt',  10000, './output/word_dict.txt')
+#feature_selection('./output/word_count.txt',  10000, './output/word_dict.txt')

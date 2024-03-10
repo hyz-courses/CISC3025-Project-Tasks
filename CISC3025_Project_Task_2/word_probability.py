@@ -13,8 +13,6 @@ from collections import Counter
 # local imports
 import __funcs__
 
-settings = __funcs__.settings
-
 
 def word_probability(input_files, output_file=None, add_alpha=0, precision=None, use_log=False):
     # -----------------1.Preparation----------------- #

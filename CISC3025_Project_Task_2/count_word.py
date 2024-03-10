@@ -15,10 +15,6 @@ import __funcs__
 input_file = './data/train.json'
 output_file = './output/word_count.txt'
 
-custom_settings = {
-    "WRITE_DATA": True
-}
-
 
 def count_word(input_file_path, output_file_path):
     # ---------- 1. Preparation ------------#
@@ -81,7 +77,7 @@ def count_word(input_file_path, output_file_path):
         token_data_arr.append(cur_data_arr)
 
     # 5.3 Write files
-    if custom_settings['WRITE_DATA'] is False:
+    if __funcs__.settings['WRITE_FILES'] is False:
         return tf_matrix
     with open(output_file_path, "w") as o_file:
         o_file.write(class_freq_str)

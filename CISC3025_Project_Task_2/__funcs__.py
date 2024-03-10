@@ -36,10 +36,15 @@ def extract_data_from_txt(input_file, tokenizer, max_threshold=None, include_fir
     :param include_first_line: Whether to read the first line of the input txt file.
     :param convert_to_int: Convert to integer.
 
+    :returns first_line: Data of the first line of the input txt file.
+    :returns selected_features: Data of the following line of the input txt file.
+
     This function extracts data from txt file and turn them into a list of pairs.
     The first element of the pair is the word in the vocabulary;
     The second element of the pair is a length-5 integer list of word related data.
     Primary key is word, index is classes.
+
+
     """
 
     selected_features = []

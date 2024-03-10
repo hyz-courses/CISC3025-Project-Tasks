@@ -14,7 +14,7 @@ from collections import Counter
 import __funcs__
 
 custom_settings = {
-    "WRITE_DATA": False
+    "WRITE_DATA": True
 }
 
 input_file = './data/test.json'
@@ -95,19 +95,17 @@ def classification(input_file_path, output_file_path):
             if word in log_neg_word_probs_dict:
                 # If present in training vocab, get the list of joined probs
                 cur_log_neg_word_probs = log_neg_word_probs_dict[word]  # Current
-                pass
+
             else:
                 # If not, set the list to empty_prob_val = -log(1 / (word freqs for class + vocab size))
                 cur_log_neg_word_probs = [
                     -math.log(1 / (word_freqs + (len(vocab)+1)))
                     for word_freqs in train_class_freq
                 ]
-                pass
-
             cur_sentence_word_probs_list.append(cur_log_neg_word_probs)
 
         # 3.3.2 Calculate P(sentence|c) for all class in negative log space.
-        cur_sentence_joined_probs = [1, 1, 1, 1, 1]
+        cur_sentence_joined_probs = [0, 0, 0, 0, 0]
         for log_neg_probs in cur_sentence_word_probs_list:
             for index, log_neg_prob in enumerate(log_neg_probs):
                 cur_sentence_joined_probs[index] += log_neg_prob
@@ -130,6 +128,14 @@ def classification(input_file_path, output_file_path):
         for instance in class_pred_tuples:
             instance_str = instance[0] + " " + instance[1] + "\n"
             o_file.write(instance_str)
+        o_file.close()
+
+    with open("./temp_output/classification_compare.txt", 'w') as to_file:
+        to_file.write("\n")
+        for instance in class_pred_tuples:
+            instance_str = instance[0] + " " + instance[1] + " " + instance[2] + "\n"
+            to_file.write(instance_str)
+        to_file.close()
 
 
 classification(input_file, output_file)

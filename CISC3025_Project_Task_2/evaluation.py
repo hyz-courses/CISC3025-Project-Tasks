@@ -83,6 +83,32 @@ def evaluation():
 
     print("Micro-Average F-Score: " + str(f_score_micro))
 
+    # ----------- 6. Write Result ------------ #
+    with open('./output/f_scores.txt', 'w') as o_file:
+        o_file.write("Precisions: ")
+        for prec in precisions:
+            o_file.write(str(prec) + " ")
+        o_file.write("\n")
 
+        o_file.write("Recalls: ")
+        for rec in recalls:
+            o_file.write(str(rec) + " ")
+        o_file.write("\n")
+
+        o_file.write("Avg Prec: " + str(avg_prec) + "\n")
+        o_file.write("Avg Rec: " + str(avg_rec) + "\n")
+
+        o_file.write("F-Scores: ")
+        for f_score in f_scores:
+            o_file.write(str(f_score) + " ")
+        o_file.write("\n")
+
+        o_file.write(
+            "Macro-Average F-Score: " + str(f_score_macro) + "\n"
+        )
+
+        o_file.write(
+            "Micro-Average F-Score: " + str(f_score_micro) + "\n"
+        )
 
 evaluation()

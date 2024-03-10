@@ -7,7 +7,7 @@ from collections import Counter
 
 settings = {
     "PRINT_PROCESS": False,
-    "WRITE_FILES": True,
+    "WRITE_FILES": False,
 }
 
 # ANSI Colors: For better distinguishable in console.

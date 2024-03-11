@@ -90,4 +90,4 @@ def count_word(input_file_path, output_file_path):
     return tf_matrix
 
 
-count_word(input_file, output_file)
+#count_word(input_file, output_file)

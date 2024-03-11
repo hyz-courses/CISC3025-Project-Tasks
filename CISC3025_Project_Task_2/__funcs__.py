@@ -6,7 +6,7 @@ import numpy as np
 from collections import Counter
 
 settings = {
-    "PRINT_PROCESS": False,
+    "PRINT_PROCESS": True,
     "WRITE_FILES": True,
 }
 

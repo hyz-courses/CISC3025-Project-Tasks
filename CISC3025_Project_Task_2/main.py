@@ -34,7 +34,7 @@ def main():
     _count_word(file_paths["TRAINING_DATA"], file_paths["WORD_COUNT"])
 
     __funcs__.console_log_title("Running feature_selection.py")
-    _feature_selection(file_paths['WORD_COUNT'], threshold=10000, output_file=file_paths['WORD_DICT'])
+    _feature_selection(file_paths['WORD_COUNT'], threshold=10000, output_file_path=file_paths['WORD_DICT'])
 
     __funcs__.console_log_title("Running word_probability.py")
     _word_probability(

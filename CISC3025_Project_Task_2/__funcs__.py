@@ -194,5 +194,18 @@ def extract_data_from_json(input_file_path, tokenizer, include_id=False):
     return class_freqs, t_class_sentence_list, t_class_dict_list
 
 
+def make_vocab(t_class_dict_list):
+    """
+    :param t_class_dict_list: Dictionary list.
+    """
+
+    vocab = set()
+    for instance in t_class_dict_list:
+        for key, _ in instance[1].items():
+            vocab.add(key)
+    vocab = list(vocab)
+    return vocab
+
+
 def console_log_title(string):
     print(color['green'] + string + color['default'])

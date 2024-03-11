@@ -51,4 +51,4 @@ def feature_selection(input_file_path, threshold=None, output_file_path=None):
     return word_freqs_for_each_class_arr, train_word_freqs_list
 
 
-feature_selection(input_file,  10000, output_file)
+#feature_selection(input_file,  10000, output_file)

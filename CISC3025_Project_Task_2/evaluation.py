@@ -111,4 +111,5 @@ def evaluation(input_file, output_file):
             "Micro-Average F-Score: " + str(f_score_micro) + "\n"
         )
 
-#evaluation()
+
+#evaluation("./temp_output/classification_compare.txt", "./output/f_scores.txt")

@@ -1,5 +1,8 @@
 # CISC3003-Project-Task 2
 
+## Author:
+Huang Yanzhen, DC126732 on CISC3025 - Natural Language Processing.
+
 ## Results
 To view results, please head to the `./output/` directory.
 1. [word count](./output/word_count.txt): **First line:** Doc freq for all classes; **Other:** Word freqs in each class for all word types.

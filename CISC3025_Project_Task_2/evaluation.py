@@ -81,7 +81,7 @@ def evaluation(input_file, output_file):
     # ---------- 5. F-Score: Micro-Average -------------- #
     f_score_micro = 2 * avg_prec * avg_rec / (avg_prec + avg_rec)
 
-    print("Micro-Average F-Score: " + str(f_score_micro))
+    print("Macro'-Average F-Score: " + str(f_score_micro))
 
     # ----------- 6. Write Result ------------ #
     with open(output_file, 'w') as o_file:
@@ -108,7 +108,7 @@ def evaluation(input_file, output_file):
         )
 
         o_file.write(
-            "Micro-Average F-Score: " + str(f_score_micro) + "\n"
+            "Macro'-Average F-Score: " + str(f_score_micro) + "\n"
         )
 
 
